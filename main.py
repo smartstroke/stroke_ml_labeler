@@ -67,6 +67,7 @@ def show(x_in, data_in):
     plt.title("FSR Raw 10 points Subsubset")
 
     plt.draw()
+    plt.tight_layout()
 
 
 data = pd.read_csv("data/mar24_2023_normal.csv")
@@ -84,7 +85,7 @@ while True:
     else:
         while True:
             show(point, data)
-            choice = input('(c)atch, (v)nothing, (q)uit:')
+            choice = input('(c)atch, (v)nothing, z(skip 10) (q)uit:')
 
             if choice == "q":
                 exit()
@@ -97,8 +98,38 @@ while True:
 
                     # Pass the list as an argument into
                     # the writerow()
-                    #acc_x = data_in.loc[:, "AccX"]
-                    writer_object.writerow("test")
+                    acc_x = list(data.loc[point: point + 9, "AccX"])
+                    acc_y = list(data.loc[point: point + 9, "AccY"])
+                    acc_z = list(data.loc[point: point + 9, "AccZ"])
+                    fsr = list(data.loc[point: point + 9, "ADC"])
+                    gyro_x = list(data.loc[point: point + 9, "GyroX"])
+                    gyro_y = list(data.loc[point: point + 9, "GyroY"])
+                    gyro_z = list(data.loc[point: point + 9, "GyroZ"])
+
+                    writer_object.writerow([1] + acc_x+acc_y+acc_z+gyro_x+gyro_y+gyro_z+fsr)
+
+                    # Close the file object
+                    f_object.close()
+            elif choice == "z":
+                point = point + 9
+            elif choice == "v":
+                with open('output.csv', 'a', newline='') as f_object:
+
+                    # Pass this file object to csv.writer()
+                    # and get a writer object
+                    writer_object = writer(f_object)
+
+                    # Pass the list as an argument into
+                    # the writerow()
+                    acc_x = list(data.loc[point: point + 9, "AccX"])
+                    acc_y = list(data.loc[point: point + 9, "AccY"])
+                    acc_z = list(data.loc[point: point + 9, "AccZ"])
+                    fsr = list(data.loc[point: point + 9, "ADC"])
+                    gyro_x = list(data.loc[point: point + 9, "GyroX"])
+                    gyro_y = list(data.loc[point: point + 9, "GyroY"])
+                    gyro_z = list(data.loc[point: point + 9, "GyroZ"])
+
+                    writer_object.writerow([0] + acc_x+acc_y+acc_z+gyro_x+gyro_y+gyro_z+fsr)
 
                     # Close the file object
                     f_object.close()
